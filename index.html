@@ -12,8 +12,15 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Estilo para suavizar elementos arrastáveis e garantir foco correto */
+        .draggable {
+            touch-action: none;
+            user-select: none;
+        }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen font-sans antialiased transition-colors duration-300 pb-24 md:pb-6">
+<body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen font-sans antialiased transition-colors duration-300 pb-6">
 
     <header class="w-full bg-white border-b border-slate-200 dark:bg-slate-900 dark:border-slate-800 p-4 sticky top-0 z-40 transition-colors duration-300">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -80,26 +87,28 @@
         </div>
     </section>
 
-    <section id="analise-deposito-secao" class="max-w-7xl mx-auto px-4 md:px-6 fixed bottom-4 left-4 right-4 md:relative md:bottom-auto md:left-auto md:right-auto z-50 md:z-auto transition-all duration-300">
-        <div id="analise-card-corpo" class="p-3 md:p-4 bg-emerald-600 md:bg-emerald-50 text-white md:text-slate-900 border border-emerald-500 md:border-emerald-200 dark:md:bg-emerald-950/40 dark:md:border-emerald-800/60 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-2 shadow-2xl md:shadow-none cursor-pointer md:cursor-default" onclick="toggleAnaliseMobile()">
-            <div class="flex items-center gap-3 w-full">
-                <div class="p-2 bg-white/20 md:bg-emerald-500/10 rounded-xl text-white md:text-emerald-600 dark:md:text-emerald-400">
-                    <i data-lucide="trending-up" class="w-5 h-5 md:w-6 md:h-6"></i>
+    <div id="analise-floating-container" class="draggable md:relative fixed top-24 right-4 z-50 md:top-auto md:right-auto md:z-auto md:max-w-7xl md:mx-auto md:px-4 md:px-6">
+        
+        <button id="btn-analise-floating" class="md:hidden w-12 h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-2xl flex items-center justify-center border border-emerald-500 active:scale-95 transition-transform">
+            <i data-lucide="trending-up" class="w-6 h-6"></i>
+        </button>
+
+        <div id="analise-card-corpo" class="hidden md:flex p-4 bg-emerald-50 text-slate-900 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/60 rounded-2xl flex-col md:flex-row justify-between items-start md:items-center gap-2 absolute md:relative right-0 top-14 md:top-auto w-72 md:w-full shadow-2xl md:shadow-none z-50">
+            <div class="flex items-center gap-3">
+                <div class="hidden md:block p-2 bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
                 </div>
-                <div class="flex-1">
-                    <h3 class="text-xs md:text-sm font-bold flex justify-between items-center">
-                        <span>Análise de Depósito Necessário</span>
-                        <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full md:hidden">Expandir</span>
-                    </h3>
-                    <p id="analise-subtitulo-mobile" class="hidden md:block text-[11px] md:text-xs text-emerald-100 md:text-slate-500 dark:md:text-slate-400">Baseado no Saldo em Aberto menos o Caixa Atual dividido pelos meses restantes.</p>
+                <div>
+                    <h3 class="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-200">Análise de Depósito Necessário para 15/08/2026</h3>
+                    <p class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400">Baseado no Saldo em Aberto menos o Caixa Atual dividido pelos meses restantes.</p>
                 </div>
             </div>
-            <div id="analise-valores-mobile" class="hidden md:block text-left md:text-right border-t border-white/20 md:border-none pt-2 md:pt-0 w-full md:w-auto">
-                <span class="text-[10px] md:text-xs text-emerald-100 md:text-slate-500 dark:md:text-slate-400 block font-medium">Aporte Mensal Estipulado:</span>
-                <span id="analise-aporte-necessario" class="text-lg md:text-xl font-black text-white md:text-emerald-600 dark:md:text-emerald-400">R$ 0,00 /mês</span>
+            <div class="text-left md:text-right border-t border-slate-200 dark:border-slate-800 md:border-none pt-2 md:pt-0 w-full md:w-auto">
+                <span class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 block font-medium">Aporte Mensal Estipulado:</span>
+                <span id="analise-aporte-necessario" class="text-base md:text-xl font-black text-emerald-600 dark:text-emerald-400">R$ 0,00 /mês</span>
             </div>
         </div>
-    </section>
+    </div>
 
     <main class="max-w-7xl mx-auto p-4 md:p-6 flex flex-col lg:grid lg:grid-cols-3 gap-6">
         
@@ -245,21 +254,22 @@
         </div>
     </main>
 
-    <div class="fixed bottom-4 right-4 z-50 max-w-sm w-fit md:w-full p-2 md:p-4 bg-white border border-purple-200 dark:bg-slate-900 dark:border-purple-900/60 rounded-2xl shadow-2xl flex flex-col gap-3 transition-colors duration-300">
-        <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-            <div class="flex items-center gap-2">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-                </span>
-                <h3 class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-1">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i> Consultor
-                </h3>
-            </div>
-            <button onclick="document.getElementById('gemini-chat-container').classList.toggle('hidden')" class="text-[10px] bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 px-2 py-0.5 rounded-lg font-bold">Chat</button>
-        </div>
+    <div id="gemini-floating-container" class="draggable fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 max-w-sm w-fit transition-all duration-300">
         
-        <div id="gemini-chat-container" class="hidden md:flex flex-col gap-3">
+        <div id="gemini-chat-container" class="hidden bg-white border border-purple-200 dark:bg-slate-900 dark:border-purple-900/60 rounded-2xl shadow-2xl flex-col gap-3 p-4 w-72 md:w-80">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                    </span>
+                    <h3 class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i> Consultor Gemini
+                    </h3>
+                </div>
+                <button onclick="document.getElementById('gemini-chat-container').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 text-xs">Fechar</button>
+            </div>
+            
             <div id="gemini-chat-area" class="text-xs text-slate-600 dark:text-slate-400 h-24 overflow-y-auto bg-slate-50 border border-slate-200 dark:bg-slate-950 dark:border-slate-800/50 p-2 rounded-xl">
                 Olá! Sou seu assistente financeiro. Como posso ajudar?
             </div>
@@ -270,6 +280,10 @@
                 </button>
             </div>
         </div>
+
+        <button id="btn-gemini-floating" class="w-12 h-12 bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-2xl flex items-center justify-center border border-purple-500 active:scale-95 transition-transform">
+            <i data-lucide="sparkles" class="w-6 h-6"></i>
+        </button>
     </div>
 
     <script>
@@ -281,19 +295,95 @@
             }
         }
 
-        // 2. Controla o botão flutuante expansível da Análise de Aporte
-        function toggleAnaliseMobile() {
-            if (window.innerWidth < 768) {
-                const sub = document.getElementById('analise-subtitulo-mobile');
-                const val = document.getElementById('analise-valores-mobile');
-                const container = document.getElementById('analise-deposito-secao');
+        // 2. Lógica para tornar os containers flutuantes arrastáveis (Mobile e PC)
+        function makeElementDraggable(containerId, buttonId, toggleCallback) {
+            const container = document.getElementById(containerId);
+            const button = document.getElementById(buttonId);
+            
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+            let hasMoved = false;
+
+            // Início do arrasto (Mouse e Touch)
+            function startDrag(e) {
+                // Previne abrir se clicar em inputs/selects dentro do container
+                if (e.target.closest('input') || e.target.closest('select') || e.target.closest('#gemini-chat-area')) return;
                 
-                sub.classList.toggle('hidden');
-                val.classList.toggle('hidden');
+                isDragging = true;
+                hasMoved = false;
+                
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                startX = clientX;
+                startY = clientY;
+                
+                const rect = container.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                
+                // Limpa propriedades de posicionamento padrão do Tailwind para permitir arrastar livremente
+                container.style.right = 'auto';
+                container.style.bottom = 'auto';
+                container.style.left = initialLeft + 'px';
+                container.style.top = initialTop + 'px';
             }
+
+            // Movimentação
+            function drag(e) {
+                if (!isDragging) return;
+                
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+                
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                    hasMoved = true;
+                }
+                
+                container.style.left = (initialLeft + dx) + 'px';
+                container.style.top = (initialTop + dy) + 'px';
+            }
+
+            // Fim do arrasto
+            function endDrag(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                // Se o usuário apenas clicou (não arrastou significativamente), executa a ação de abrir/expandir
+                if (!hasMoved) {
+                    toggleCallback();
+                }
+            }
+
+            // Eventos de Mouse
+            button.addEventListener('mousedown', startDrag);
+            window.addEventListener('mousemove', drag);
+            window.addEventListener('mouseup', endDrag);
+
+            // Eventos de Toque (Celular)
+            button.addEventListener('touchstart', startDrag, { passive: true });
+            window.addEventListener('touchmove', drag, { passive: false });
+            window.addEventListener('touchend', endDrag);
         }
 
-        // 3. Controla a barra colapsável de Inserção de Movimentação (Funciona em PC e Mobile)
+        // Ativa o arrastar e clique do botão de Análise de Depósito
+        makeElementDraggable('analise-floating-container', 'btn-analise-floating', function() {
+            const cardCorpo = document.getElementById('analise-card-corpo');
+            cardCorpo.classList.toggle('hidden');
+            cardCorpo.classList.toggle('flex');
+        });
+
+        // Ativa o arrastar e clique do botão do Consultor Gemini
+        makeElementDraggable('gemini-floating-container', 'btn-gemini-floating', function() {
+            const chatContainer = document.getElementById('gemini-chat-container');
+            chatContainer.classList.toggle('hidden');
+            chatContainer.classList.toggle('flex');
+        });
+
+        // 3. Controla o formulário colapsável de Inserção de Movimentação
         function toggleFormularioMovimentacao() {
             const form = document.getElementById('corpo-form-movimentacao');
             const botaoTexto = document.getElementById('seta-movimentacao');
