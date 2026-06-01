@@ -1,6 +1,6 @@
-// ==========================================
+// =========================================
 // WEDDINGHUB - MOTOR COM SUPABASE v3.0 (CENTRALIZADO)
-// ==========================================
+// =========================================
 
 const SUPABASE_URL = "https://fncbdfljmidoewlwakkt.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuY2JkZmxqbWlkb2V3bHdha2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NzI4NTAsImV4cCI6MjA5NTE0ODg1MH0.jW2qvsNe-WTfs77-hoZrDVHqnhGFx4jgkkQ9VloLuV0";
@@ -28,8 +28,8 @@ async function carregarDadosDoBanco() {
         atualizarSelectFornecedores();
         renderizarSistema();
     } catch (error) {
-        console.error("Erro ao carregar dados do Supabase:", error.message);
-        alert("Erro ao conectar com o banco de dados. Verifique suas credenciais.");
+        console.error("Erro ao carregar dados do Supabase:", error);
+        alert("Erro interno ao processar sua solicitação. Tente novamente mais tarde.");
     }
 }
 
@@ -187,11 +187,17 @@ function inicializarAcoesFornecedores() {
         if (id) {
             // Modo Edição (UPDATE)
             const { error } = await supabaseClient.from('fornecedores').update({ nome, servico, valor }).eq('id', id);
-            if (error) return alert("Erro ao atualizar fornecedor: " + error.message);
+            if (error) {
+                console.error(error);
+                return alert("Erro interno ao processar sua solicitação.");
+            }
         } else {
             // Modo Cadastro (INSERT)
             const { error } = await supabaseClient.from('fornecedores').insert([{ nome, servico, valor }]);
-            if (error) return alert("Erro ao salvar fornecedor: " + error.message);
+            if (error) {
+                console.error(error);
+                return alert("Erro interno ao processar sua solicitação.");
+            }
         }
 
         limparFormularioFornecedor();
@@ -232,14 +238,17 @@ function limparFormularioFornecedor() {
     document.getElementById('forn-card-subtitulo').innerText = "Adicione novos contratos ou serviços à lista.";
     document.getElementById('btn-forn-texto').innerText = "Adicionar Contrato";
     if (document.getElementById('btn-cancelar-fornecedor')) {
-        document.getElementById('btn-cancelar-fornecedor').add('hidden');
+        document.getElementById('btn-cancelar-fornecedor').classList.add('hidden');
     }
 }
 
 async function removerFornecedor(id) {
     if (confirm("Excluir este contrato permanentemente? Isso não apagará o histórico de pagamentos feitos a ele.")) {
         const { error } = await supabaseClient.from('fornecedores').delete().eq('id', id);
-        if (error) alert("Erro ao deletar: " + error.message);
+        if (error) {
+            console.error(error);
+            alert("Erro interno ao processar sua solicitação.");
+        }
         carregarDadosDoBanco();
     }
 }
@@ -285,7 +294,10 @@ function inicializarAcoesMovimentacoes() {
 
         // Insere na tabela 'historico_depositos' do seu Supabase
         const { error } = await supabaseClient.from('historico_depositos').insert([payload]);
-        if (error) return alert("Erro ao registrar movimentação: " + error.message);
+        if (error) {
+            console.error(error);
+            return alert("Erro interno ao processar sua solicitação.");
+        }
 
         // Limpa inputs
         document.getElementById('deposito-descricao').value = '';
@@ -299,7 +311,10 @@ function inicializarAcoesMovimentacoes() {
 async function removerMovimentacao(id) {
     if (confirm("Remover permanentemente este registro de movimentação do caixa?")) {
         const { error } = await supabaseClient.from('historico_depositos').delete().eq('id', id);
-        if (error) alert("Erro ao deletar registro: " + error.message);
+        if (error) {
+            console.error(error);
+            alert("Erro interno ao processar sua solicitação.");
+        }
         carregarDadosDoBanco();
     }
 }
