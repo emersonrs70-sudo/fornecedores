@@ -91,27 +91,51 @@
                             </tr>
                         </thead>
                         <tbody id="tabela-fornecedores">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="bg-white border border-slate-200 dark:bg-slate-900 dark:border-slate-800 rounded-2xl shadow-md dark:shadow-xl p-6 transition-colors duration-300">
                 <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-4">
-                    <i data-lucide="history" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i> Histórico de Depósitos / Aportes
+                    <i data-lucide="circle-dollar-sign" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i> Movimentações de Caixa
                 </h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-end">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="space-y-1">
-                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Data do Depósito</label>
+                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Tipo de Movimentação</label>
+                        <select id="movimentacao-tipo" class="w-full bg-slate-50 text-slate-900 border border-slate-300 dark:bg-slate-950 dark:text-white dark:border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="aporte">Aporte (Entrada de Caixa)</option>
+                            <option value="pagamento">Pagamento de Fornecedor (Saída)</option>
+                            <option value="retirada">Retirada Extra (Saída)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Data</label>
                         <input type="date" id="deposito-data" class="w-full bg-slate-50 text-slate-900 border border-slate-300 dark:bg-slate-950 dark:text-white dark:border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="space-y-1">
-                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Valor Depositado (R$)</label>
+                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Descrição / Destino / Origem</label>
+                        <input type="text" id="deposito-descricao" placeholder="Ex: Aporte mensal, Parcela 1, Presente, etc." class="w-full bg-slate-50 text-slate-900 border border-slate-300 dark:bg-slate-950 dark:text-white dark:border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Vincular a Fornecedor</label>
+                        <select id="movimentacao-fornecedor" disabled class="w-full bg-slate-100 text-slate-400 border border-slate-200 dark:bg-slate-900 dark:text-slate-600 dark:border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none transition-colors">
+                            <option value="">Selecione o fornecedor...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
+                    <div class="space-y-1">
+                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Valor (R$)</label>
                         <input type="number" id="deposito-valor" placeholder="0,00" class="w-full bg-slate-50 text-slate-900 border border-slate-300 dark:bg-slate-950 dark:text-white dark:border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
                     </div>
-                    <button id="btn-salvar-deposito" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2 px-4 rounded-xl transition-colors h-fit flex items-center justify-center gap-2">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Registrar Aporte
+                    <button id="btn-salvar-deposito" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2 px-4 rounded-xl transition-colors h-[38px] flex items-center justify-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Registrar Movimentação
                     </button>
                 </div>
 
@@ -120,12 +144,14 @@
                         <thead>
                             <tr class="border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                                 <th class="pb-2">Data</th>
+                                <th class="pb-2">Tipo</th>
+                                <th class="pb-2">Descrição</th>
                                 <th class="pb-2 text-right">Valor</th>
                                 <th class="pb-2 text-center">Ação</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-historico-depositos">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -135,11 +161,13 @@
         <div class="space-y-6">
             
             <div class="bg-white border border-slate-200 dark:bg-slate-900 dark:border-slate-800 rounded-2xl shadow-md dark:shadow-xl p-6 h-fit space-y-4 transition-colors duration-300">
-                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i> Novo Fornecedor
+                <h2 id="forn-card-titulo" class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i> <span id="forn-titulo-texto">Novo Fornecedor</span>
                 </h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Adicione novos contratos ou serviços à lista.</p>
+                <p id="forn-card-subtitulo" class="text-xs text-slate-500 dark:text-slate-400">Adicione novos contratos ou serviços à lista.</p>
                 
+                <input type="hidden" id="forn-id">
+
                 <div class="space-y-3 pt-2">
                     <div class="space-y-1">
                         <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Nome do Fornecedor</label>
@@ -153,14 +181,15 @@
                         <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Valor Total do Contrato (R$)</label>
                         <input type="number" id="add-forn-valor" placeholder="0,00" class="w-full bg-slate-50 text-slate-900 border border-slate-300 dark:bg-slate-950 dark:text-white dark:border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-purple-500">
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Valor Já Pago Inicial (R$)</label>
-                        <input type="number" id="add-forn-pago" value="0" class="w-full bg-slate-50 text-slate-900 border border-slate-300 dark:bg-slate-950 dark:text-white dark:border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-purple-500">
-                    </div>
                     
-                    <button id="btn-salvar-fornecedor" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors mt-2 flex items-center justify-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i> Adicionar Contrato
-                    </button>
+                    <div class="flex gap-2 pt-2">
+                        <button id="btn-cancelar-fornecedor" class="hidden w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 text-sm font-semibold py-2.5 rounded-xl transition-colors">
+                            Cancelar
+                        </button>
+                        <button id="btn-salvar-fornecedor" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> <span id="btn-forn-texto">Adicionar Contrato</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
